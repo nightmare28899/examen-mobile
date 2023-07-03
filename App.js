@@ -1,6 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { LogBox, createContext } from 'react-native';
+import { LogBox, createContext } from "react-native";
 import Login from "./screens/login/Login";
 import List from "./screens/list/List";
 import Regiter from "./screens/register/Register";
@@ -17,6 +17,6 @@ const App = () => {
       </Stack.Navigator>
     </NavigationContainer>
   );
-}
+};
 
 export default App;
