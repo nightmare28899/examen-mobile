@@ -43,7 +43,7 @@ const LoginScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Inicio de sesión</Text>
-      <Text style={styles.colorBlue}>Email</Text>
+      <Text style={styles.colorBlue}>Email:</Text>
       <TextInput
         style={styles.input}
         placeholder="Ingresa tu email"
@@ -53,7 +53,7 @@ const LoginScreen = () => {
         autoCapitalize="none"
         maxLength={100}
       />
-      <Text style={styles.colorBlue}>Contraseña</Text>
+      <Text style={styles.colorBlue}>Contraseña:</Text>
       <TextInput
         style={styles.input}
         placeholder="Ingresa tu contraseña"

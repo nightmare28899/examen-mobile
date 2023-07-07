@@ -15,7 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import PatientList from "../../components/patientsList/index";
 import { PatientRegister } from "../../interface/patientRegister";
 
-const SearchBar = ({ onSearch, onPress }: any) => {
+const SearchBar = () => {
   const [searchText, setSearchText] = useState("");
   const navigation = useNavigation<LoginScreenNavigationProp>();
   const [patients, setPatients] = useState<PatientRegister[]>([]);
@@ -27,21 +27,18 @@ const SearchBar = ({ onSearch, onPress }: any) => {
 
   useEffect(() => {
     const loadData = async () => {
-      /* await AsyncStorage.removeItem("formData"); */
       const value = await AsyncStorage.getItem("formData");
       if (value !== null) {
         const data = JSON.parse(value);
         setPatients(data);
+      } else {
+        setPatients([]);
       }
     };
     loadData();
   }, [patients, isFocused]);
 
-  const sendRegisterView = () => {
-    navigation.navigate("Registro");
-  };
-
-  const registrosOrdenados = patients.sort(
+  const recordsOrdered = patients.sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 
@@ -72,14 +69,14 @@ const SearchBar = ({ onSearch, onPress }: any) => {
       </View>
       <View style={styles.containerList}>
         {searchText === "" ? (
-          <PatientList patients={registrosOrdenados} />
+          <PatientList patients={recordsOrdered} />
         ) : (
           <PatientList patients={searchPatients()} />
         )}
       </View>
       <TouchableOpacity
         style={styles.buttonContainer}
-        onPress={sendRegisterView}
+        onPress={() => navigation.navigate("Registro")}
       >
         <Ionicons name="ios-add" size={44} color="#FFF" />
       </TouchableOpacity>

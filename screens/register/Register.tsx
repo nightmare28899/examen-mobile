@@ -38,14 +38,6 @@ const RegisterForm = () => {
     setShowDatePicker(false);
   };
 
-  const handleShowDatePicker = () => {
-    setShowDatePicker(true);
-  };
-
-  const handleHideDatePicker = () => {
-    setShowDatePicker(false);
-  };
-
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -131,6 +123,20 @@ const RegisterForm = () => {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      const consult = await AsyncStorage.removeItem("formData");
+      if (consult !== null) {
+        ToastMessage("Data deleted successfully!");
+        navigation.navigate("Listado");
+      } else {
+        ToastMessage("Data is empty!");
+      }
+    } catch (error) {
+      console.error("Error al eliminar los datos:", error);
+    }
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.colorBlue}>Fecha</Text>
@@ -140,13 +146,16 @@ const RegisterForm = () => {
         value={formatDate(selectedDate)}
         editable={false}
       />
-      <Button title="Seleccionar fecha" onPress={handleShowDatePicker} />
+      <Button
+        title="Seleccionar fecha"
+        onPress={() => setShowDatePicker(true)}
+      />
       <DateTimePickerModal
         isVisible={showDatePicker}
         mode="date"
         locale="es-ES"
         onConfirm={handleDateChange}
-        onCancel={handleHideDatePicker}
+        onCancel={() => setShowDatePicker(false)}
       />
       <Text style={[styles.colorBlue, styles.space]}>Paciente</Text>
       <TextInput
@@ -176,7 +185,7 @@ const RegisterForm = () => {
       <Text style={styles.colorBlue}>Malestar/Sintomas</Text>
       <TextInput
         style={styles.input}
-        placeholder="Describe el discomfort presentado"
+        placeholder="Describe el malestar presentado"
         value={discomfort}
         onChangeText={setdiscomfort}
         maxLength={1024}
@@ -189,6 +198,10 @@ const RegisterForm = () => {
 
       <TouchableOpacity style={styles.buttonSave} onPress={handleSubmit}>
         <Text style={styles.text}>Guardar</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.buttonDelete} onPress={handleDelete}>
+        <Text style={styles.text}>Eliminar registros</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -301,6 +314,22 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     backgroundColor: "#007AFF",
+    marginBottom: 30,
+    elevation: 4,
+    width: "60%",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  buttonDelete: {
+    alignSelf: "center",
+    padding: 15,
+    borderRadius: 10,
+    backgroundColor: "red",
     marginBottom: 40,
     elevation: 4,
     width: "60%",
