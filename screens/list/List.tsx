@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  ActivityIndicator,
-} from "react-native";
+import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -14,16 +8,24 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 /* Utils */
 import PatientList from "../../components/patientsList/index";
 import { PatientRegister } from "../../interface/patientRegister";
+import stylesLight from "../../assets/css/stylesLight";
+import stylesDark from "../../assets/css/stylesDark";
 
 const SearchBar = () => {
   const [searchText, setSearchText] = useState("");
   const navigation = useNavigation<LoginScreenNavigationProp>();
   const [patients, setPatients] = useState<PatientRegister[]>([]);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const isFocused = useIsFocused();
   type LoginScreenNavigationProp = StackNavigationProp<
     RootStackParamList,
     "Login"
   >;
+
+  const modeStyle = isDarkMode ? stylesDark : stylesLight;
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -52,26 +54,33 @@ const SearchBar = () => {
   };
 
   return (
-    <View style={{ flex: 1, alignSelf: "stretch" }}>
-      <View style={styles.container}>
+    <View style={[{ flex: 1, alignSelf: "stretch" }, modeStyle.container]}>
+      <View style={[modeStyle.containerSearch]}>
         <Ionicons
           name="ios-search"
           size={20}
-          color="#8E8E93"
-          style={styles.searchIcon}
+          color={!isDarkMode ? "black" : "white"}
+          style={modeStyle.searchIcon}
         />
         <TextInput
-          style={styles.input}
+          style={modeStyle.input}
           placeholder="Buscar..."
+          placeholderTextColor={!isDarkMode ? "black" : "white"}
           value={searchText}
           onChangeText={(text) => setSearchText(text)}
         />
       </View>
-      <View style={styles.containerList}>
+      <View style={[modeStyle.containerList]}>
         {searchText === "" ? (
-          <PatientList patients={recordsOrdered} />
+          <PatientList
+            patients={recordsOrdered}
+            statusDarkMode={isDarkMode ? true : false}
+          />
         ) : (
-          <PatientList patients={searchPatients()} />
+          <PatientList
+            patients={searchPatients()}
+            statusDarkMode={isDarkMode ? true : false}
+          />
         )}
       </View>
       <TouchableOpacity
@@ -79,6 +88,16 @@ const SearchBar = () => {
         onPress={() => navigation.navigate("Registro")}
       >
         <Ionicons name="ios-add" size={44} color="#FFF" />
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.buttonContainerReverse}
+        onPress={toggleDarkMode}
+      >
+        {isDarkMode ? (
+          <Ionicons name="cloudy" size={44} color="#FFF" />
+        ) : (
+          <Ionicons name="sunny" size={44} color="#FFF" />
+        )}
       </TouchableOpacity>
     </View>
   );
@@ -118,6 +137,18 @@ const styles = StyleSheet.create({
   buttonContainer: {
     position: "absolute",
     right: "5%",
+    bottom: "5%",
+    width: "12%",
+    aspectRatio: 1,
+    borderRadius: 50,
+    backgroundColor: "#007AFF",
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 4,
+  },
+  buttonContainerReverse: {
+    position: "absolute",
+    left: "5%",
     bottom: "5%",
     width: "12%",
     aspectRatio: 1,
